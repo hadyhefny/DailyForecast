@@ -3,12 +3,11 @@ package com.hefny.hady.dailyforecast.ui
 import android.content.Context
 import android.os.Bundle
 import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Observer
 import com.hefny.hady.dailyforecast.R
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.fragment_main.*
@@ -35,9 +34,13 @@ class MainFragment : Fragment() {
         viewModel.currentWeatherData.observe(viewLifecycleOwner, { dataResource ->
             // handle loading
             Log.d(TAG, "onViewCreated: loading: ${dataResource.loading}")
-            // handle success
+            // handle success (loading data from remote data source and cache)
             dataResource.data?.peekContent()?.let {
-                Log.d(TAG, "onViewCreated: success: $it")
+                Log.d(TAG, "onViewCreated: success: ${it}")
+            }
+            // handle loading data from cache only
+            dataResource.message?.let {
+                Log.d(TAG, "onViewCreated: success cache: $it")
             }
             // handle error
             dataResource.error?.peekContent()?.let {

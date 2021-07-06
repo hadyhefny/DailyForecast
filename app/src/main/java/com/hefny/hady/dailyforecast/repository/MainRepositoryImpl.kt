@@ -4,6 +4,9 @@ import android.util.Log
 import com.hefny.hady.dailyforecast.api.WeatherApi
 import com.hefny.hady.dailyforecast.api.responses.ErrorResponse
 import com.hefny.hady.dailyforecast.api.responses.MainResponse
+import com.hefny.hady.dailyforecast.api.responses.toForecastEntity
+import com.hefny.hady.dailyforecast.persistence.ForecastDao
+import com.hefny.hady.dailyforecast.persistence.entities.toMainResponse
 import com.hefny.hady.dailyforecast.utils.ErrorUtils
 import com.hefny.hady.dailyforecast.utils.Resource
 import kotlinx.coroutines.CoroutineDispatcher
@@ -14,18 +17,31 @@ import javax.inject.Inject
 class MainRepositoryImpl
 @Inject constructor(
     private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO,
-    private val weatherApi: WeatherApi
+    private val weatherApi: WeatherApi,
+    private val forecastDao: ForecastDao
 ) : MainRepository {
     override suspend fun getWeatherByCityName(city: String): Resource<MainResponse> {
         val resource: Resource<MainResponse>
         withContext(ioDispatcher) {
             resource = try {
+                // load data from remote data source
                 val mainResponse: MainResponse = weatherApi.getWeatherByCityName(city)
-                Resource.data(mainResponse)
+                // clear old data
+                forecastDao.delete()
+                // save new data to database
+                forecastDao.save(mainResponse.toForecastEntity())
+                Resource.data(forecastDao.load(city).toMainResponse())
             } catch (e: Exception) {
                 Log.e("MainRepo", "error: ", e)
-                val errorResponse: ErrorResponse = ErrorUtils.parseError(e)
-                Resource.error(errorResponse.message)
+                // load data from cache
+                val myMainResponse = forecastDao.load(city).toMainResponse()
+                // if cache has data, show it with error message
+                if (myMainResponse != null) {
+                    Resource.data(data = myMainResponse, message = "Not accurate data")
+                } else { // if cache has no data, show error message
+                    val errorResponse: ErrorResponse = ErrorUtils.parseError(e)
+                    Resource.error(errorResponse.message)
+                }
             }
         }
         return resource

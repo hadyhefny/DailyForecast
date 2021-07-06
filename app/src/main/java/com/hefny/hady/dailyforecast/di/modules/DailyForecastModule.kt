@@ -1,12 +1,17 @@
 package com.hefny.hady.dailyforecast.di.modules
 
+import android.app.Application
+import androidx.room.Room
 import com.hefny.hady.dailyforecast.api.WeatherApi
+import com.hefny.hady.dailyforecast.persistence.AppDatabase
+import com.hefny.hady.dailyforecast.persistence.ForecastDao
 import com.hefny.hady.dailyforecast.repository.MainRepository
 import com.hefny.hady.dailyforecast.repository.MainRepositoryImpl
 import com.hefny.hady.dailyforecast.utils.Constants
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
@@ -18,7 +23,7 @@ import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-object DailyForecastApiModule {
+object DailyForecastModule {
     @Singleton
     @Provides
     fun provideHttpLoggingInterceptor(): HttpLoggingInterceptor {
@@ -65,6 +70,24 @@ object DailyForecastApiModule {
         return retrofit.create(WeatherApi::class.java)
     }
 
+    @Singleton
+    @Provides
+    fun provideAppDatabase(applicationContext: Application): AppDatabase {
+        return Room.databaseBuilder(
+            applicationContext,
+            AppDatabase::class.java,
+            "forecast_db"
+        ).build()
+    }
+
+    @Singleton
+    @Provides
+    fun provideForecastDao(
+        db: AppDatabase
+    ): ForecastDao {
+        return db.forecastDao()
+    }
+
     @Provides
     fun provideIoDispatcher(): CoroutineDispatcher = Dispatchers.IO
 
@@ -72,11 +95,13 @@ object DailyForecastApiModule {
     @Provides
     fun provideMainRepository(
         coroutineDispatcher: CoroutineDispatcher,
-        weatherApi: WeatherApi
+        weatherApi: WeatherApi,
+        forecastDao: ForecastDao
     ): MainRepository {
         return MainRepositoryImpl(
             coroutineDispatcher,
-            weatherApi
+            weatherApi,
+            forecastDao
         )
     }
 }
