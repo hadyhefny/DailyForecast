@@ -1,11 +1,15 @@
 package com.hefny.hady.dailyforecast.di.modules
 
 import com.hefny.hady.dailyforecast.api.WeatherApi
+import com.hefny.hady.dailyforecast.repository.MainRepository
+import com.hefny.hady.dailyforecast.repository.MainRepositoryImpl
 import com.hefny.hady.dailyforecast.utils.Constants
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Dispatchers
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
@@ -55,9 +59,24 @@ object DailyForecastApiModule {
 
     @Singleton
     @Provides
-    fun provideMarvelApi(
+    fun provideWeatherApi(
         retrofit: Retrofit
     ): WeatherApi {
         return retrofit.create(WeatherApi::class.java)
+    }
+
+    @Provides
+    fun provideIoDispatcher(): CoroutineDispatcher = Dispatchers.IO
+
+    @Singleton
+    @Provides
+    fun provideMainRepository(
+        coroutineDispatcher: CoroutineDispatcher,
+        weatherApi: WeatherApi
+    ): MainRepository {
+        return MainRepositoryImpl(
+            coroutineDispatcher,
+            weatherApi
+        )
     }
 }
