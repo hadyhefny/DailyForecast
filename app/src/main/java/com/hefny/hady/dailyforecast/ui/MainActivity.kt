@@ -24,9 +24,6 @@ class MainActivity : AppCompatActivity(), UICommunicationListener {
         progressDialog.isVisible = isLoading
     }
 
-    override fun showError(errorMessage: String) {
-    }
-
     override fun hideKeyboard() {
         main_constraint_layout.requestFocus()
         val imm: InputMethodManager = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager

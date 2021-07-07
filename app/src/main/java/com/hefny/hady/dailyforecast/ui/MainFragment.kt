@@ -6,9 +6,13 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.hefny.hady.dailyforecast.R
+import com.hefny.hady.dailyforecast.models.Forecast
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.fragment_main.*
 
@@ -16,6 +20,7 @@ import kotlinx.android.synthetic.main.fragment_main.*
 class MainFragment : Fragment() {
     private val TAG = "AppDebug"
     lateinit var uiCommunicationListener: UICommunicationListener
+    lateinit var weatherAdapter: WeatherAdapter
     private val viewModel: MainViewModel by viewModels()
 
     override fun onCreateView(
@@ -28,25 +33,47 @@ class MainFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        btn.setOnClickListener {
-            viewModel.setCityName("cairo")
+        initRecyclerview()
+        var cityName: String
+        search_btn.setOnClickListener {
+            cityName = city_name_edittext.text.toString()
+            if (cityName.isNotBlank()){
+                viewModel.setCityName(cityName)
+                uiCommunicationListener.hideKeyboard()
+            }
+        }
+        retry_btn.setOnClickListener {
+            cityName = city_name_edittext.text.toString()
+            viewModel.setCityName(cityName)
+            uiCommunicationListener.hideKeyboard()
         }
         viewModel.currentWeatherData.observe(viewLifecycleOwner, { dataResource ->
             // handle loading
-            Log.d(TAG, "onViewCreated: loading: ${dataResource.loading}")
+            uiCommunicationListener.showProgressBar(dataResource.loading)
             // handle success (loading data from remote data source and cache)
             dataResource.data?.peekContent()?.let {
                 Log.d(TAG, "onViewCreated: success: ${it}")
+                weatherAdapter.setForecastData(it.forecastList as ArrayList<Forecast>, it.city.name)
+                error_constraint_layout.visibility = View.GONE
+                weather_recyclerview.visibility = View.VISIBLE
             }
             // handle loading data from cache only
-            dataResource.message?.let {
-                Log.d(TAG, "onViewCreated: success cache: $it")
-            }
+            not_accurate_data_textview.isVisible = !dataResource.message.isNullOrBlank()
             // handle error
             dataResource.error?.peekContent()?.let {
-                Log.d(TAG, "onViewCreated: error: $it")
+                error_constraint_layout.visibility = View.VISIBLE
+                error_textview.text = it
+                weather_recyclerview.visibility = View.GONE
             }
         })
+    }
+
+    private fun initRecyclerview(){
+        weather_recyclerview.run {
+            layoutManager = LinearLayoutManager(requireContext())
+            weatherAdapter = WeatherAdapter()
+            adapter = weatherAdapter
+        }
     }
 
     override fun onAttach(context: Context) {

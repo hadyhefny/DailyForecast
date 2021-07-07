@@ -6,7 +6,10 @@ import com.hefny.hady.dailyforecast.api.responses.ErrorResponse
 import com.hefny.hady.dailyforecast.api.responses.MainResponse
 import com.hefny.hady.dailyforecast.api.responses.toForecastEntity
 import com.hefny.hady.dailyforecast.persistence.ForecastDao
+import com.hefny.hady.dailyforecast.persistence.entities.ForecastEntity
 import com.hefny.hady.dailyforecast.persistence.entities.toMainResponse
+import com.hefny.hady.dailyforecast.utils.Constants
+import com.hefny.hady.dailyforecast.utils.ErrorMessages
 import com.hefny.hady.dailyforecast.utils.ErrorUtils
 import com.hefny.hady.dailyforecast.utils.Resource
 import kotlinx.coroutines.CoroutineDispatcher
@@ -32,12 +35,13 @@ class MainRepositoryImpl
                 forecastDao.save(mainResponse.toForecastEntity())
                 Resource.data(forecastDao.load(city).toMainResponse())
             } catch (e: Exception) {
-                Log.e("MainRepo", "error: ", e)
+                Log.e("MainRepositoryImpl", "getWeatherByCityName: ", e)
                 // load data from cache
-                val myMainResponse = forecastDao.load(city).toMainResponse()
+                val forecastEntity: ForecastEntity = forecastDao.load(city)
                 // if cache has data, show it with error message
-                if (myMainResponse != null) {
-                    Resource.data(data = myMainResponse, message = "Not accurate data")
+                if (forecastEntity != null) {
+                    val myMainResponse: MainResponse = forecastEntity.toMainResponse()
+                    Resource.data(data = myMainResponse, message = ErrorMessages.NOT_ACCURATE_DATA)
                 } else { // if cache has no data, show error message
                     val errorResponse: ErrorResponse = ErrorUtils.parseError(e)
                     Resource.error(errorResponse.message)
