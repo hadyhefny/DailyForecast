@@ -30,7 +30,9 @@ class MainRepositoryImpl
                 // load data from remote data source
                 val mainResponse: MainResponse = weatherApi.getWeatherByCityName(city)
                 // clear old data
-                forecastDao.delete()
+                if (forecastDao.load(mainResponse.city.name) != null){
+                    forecastDao.delete(mainResponse.city.name)
+                }
                 // save new data to database
                 forecastDao.save(mainResponse.toForecastEntity())
                 Resource.data(forecastDao.load(city).toMainResponse())

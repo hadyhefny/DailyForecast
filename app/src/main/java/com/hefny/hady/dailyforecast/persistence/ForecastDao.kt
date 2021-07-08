@@ -8,8 +8,8 @@ interface ForecastDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun save(forecastEntity: ForecastEntity)
 
-    @Query("DELETE FROM forecastentity")
-    suspend fun delete()
+    @Query("DELETE FROM forecastentity WHERE city_name = :cityName")
+    suspend fun delete(cityName: String)
 
     @Query("SELECT * FROM forecastentity WHERE city_name LIKE '%'  || :cityName || '%' COLLATE NOCASE")
     suspend fun load(cityName: String): ForecastEntity

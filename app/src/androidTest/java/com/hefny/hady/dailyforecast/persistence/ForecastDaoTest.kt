@@ -95,10 +95,46 @@ class ForecastDaoTest {
         database.forecastDao().save(forecastEntity)
 
         // WHEN - delete data from database
-        database.forecastDao().delete()
+        database.forecastDao().delete("cairo")
 
         // THEN - the saved ForecastEntity is deleted
         val loaded: ForecastEntity = database.forecastDao().load("cairo")
         assertThat(loaded, `is`(nullValue()))
+    }
+
+    @Test
+    fun deleteForecastEntityAndLoadedDataReturnNotNull() = runBlockingTest {
+        // GIVEN - save two ForecastEntity
+        val forecastItemList = ArrayList<ForecastItem>()
+        val forecastItem = ForecastItem(dateInSeconds = 1625669439, 30.2, 29.5, 35.6, "clear")
+        forecastItemList.add(forecastItem)
+        val forecastEntity = ForecastEntity(forecastItemList = forecastItemList, cityName = "cairo")
+        val forecastItemList1 = ArrayList<ForecastItem>()
+        val forecastItem1 = ForecastItem(dateInSeconds = 1625669685, 25.6, 19.5, 27.2, "raining")
+        forecastItemList1.add(forecastItem1)
+        val forecastEntity1 = ForecastEntity(forecastItemList = forecastItemList1, cityName = "suez")
+        database.forecastDao().save(forecastEntity)
+        database.forecastDao().save(forecastEntity1)
+
+        // WHEN - delete data from database
+        database.forecastDao().delete("cairo")
+
+        // THEN - the loaded data contains the expected values
+        val loaded: ForecastEntity = database.forecastDao().load("suez")
+        assertThat(loaded, notNullValue())
+        assertThat(loaded.cityName, `is`(forecastEntity1.cityName))
+        loaded.forecastItemList.forEachIndexed { index, myForecastItem ->
+            assertThat(
+                myForecastItem.dateInSeconds,
+                `is`(forecastEntity1.forecastItemList[index].dateInSeconds)
+            )
+            assertThat(
+                myForecastItem.description,
+                `is`(forecastEntity1.forecastItemList[index].description)
+            )
+            assertThat(myForecastItem.temp, `is`(forecastEntity1.forecastItemList[index].temp))
+            assertThat(myForecastItem.tempMax, `is`(forecastEntity1.forecastItemList[index].tempMax))
+            assertThat(myForecastItem.tempMin, `is`(forecastEntity1.forecastItemList[index].tempMin))
+        }
     }
 }
