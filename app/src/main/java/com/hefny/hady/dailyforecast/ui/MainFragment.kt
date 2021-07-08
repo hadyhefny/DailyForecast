@@ -21,7 +21,7 @@ class MainFragment : Fragment() {
     private val TAG = "AppDebug"
     lateinit var uiCommunicationListener: UICommunicationListener
     lateinit var weatherAdapter: WeatherAdapter
-    private val viewModel: MainViewModel by viewModels()
+    val viewModel: MainViewModel by viewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
