@@ -12,5 +12,5 @@ interface ForecastDao {
     suspend fun delete(cityName: String)
 
     @Query("SELECT * FROM forecastentity WHERE city_name LIKE '%'  || :cityName || '%' COLLATE NOCASE")
-    suspend fun load(cityName: String): ForecastEntity
+    suspend fun load(cityName: String): ForecastEntity?
 }

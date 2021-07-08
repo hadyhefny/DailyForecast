@@ -51,7 +51,7 @@ class ForecastDaoTest {
         database.forecastDao().save(forecastEntity)
 
         // THEN - the loaded data is not null
-        val loaded: ForecastEntity = database.forecastDao().load("cairo")
+        val loaded: ForecastEntity? = database.forecastDao().load("cairo")
         assertThat(loaded, notNullValue())
     }
 
@@ -65,12 +65,12 @@ class ForecastDaoTest {
         database.forecastDao().save(forecastEntity)
 
         // WHEN - load ForecastEntity using city name form the database
-        val loaded: ForecastEntity = database.forecastDao().load("cairo")
+        val loaded: ForecastEntity? = database.forecastDao().load("cairo")
 
         // THEN - the loaded data contains the expected values
         assertThat(loaded, notNullValue())
-        assertThat(loaded.cityName, `is`(forecastEntity.cityName))
-        loaded.forecastItemList.forEachIndexed { index, myForecastItem ->
+        assertThat(loaded?.cityName, `is`(forecastEntity.cityName))
+        loaded?.forecastItemList?.forEachIndexed { index, myForecastItem ->
             assertThat(
                 myForecastItem.dateInSeconds,
                 `is`(forecastEntity.forecastItemList[index].dateInSeconds)
@@ -98,7 +98,7 @@ class ForecastDaoTest {
         database.forecastDao().delete("cairo")
 
         // THEN - the saved ForecastEntity is deleted
-        val loaded: ForecastEntity = database.forecastDao().load("cairo")
+        val loaded: ForecastEntity? = database.forecastDao().load("cairo")
         assertThat(loaded, `is`(nullValue()))
     }
 
@@ -120,10 +120,10 @@ class ForecastDaoTest {
         database.forecastDao().delete("cairo")
 
         // THEN - the loaded data contains the expected values
-        val loaded: ForecastEntity = database.forecastDao().load("suez")
+        val loaded: ForecastEntity? = database.forecastDao().load("suez")
         assertThat(loaded, notNullValue())
-        assertThat(loaded.cityName, `is`(forecastEntity1.cityName))
-        loaded.forecastItemList.forEachIndexed { index, myForecastItem ->
+        assertThat(loaded?.cityName, `is`(forecastEntity1.cityName))
+        loaded?.forecastItemList?.forEachIndexed { index, myForecastItem ->
             assertThat(
                 myForecastItem.dateInSeconds,
                 `is`(forecastEntity1.forecastItemList[index].dateInSeconds)

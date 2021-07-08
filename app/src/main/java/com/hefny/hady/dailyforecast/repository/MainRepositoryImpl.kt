@@ -35,11 +35,11 @@ class MainRepositoryImpl
                 }
                 // save new data to database
                 forecastDao.save(mainResponse.toForecastEntity())
-                Resource.data(forecastDao.load(city).toMainResponse())
+                Resource.data(forecastDao.load(city)?.toMainResponse())
             } catch (e: Exception) {
-                Log.e("MainRepositoryImpl", "getWeatherByCityName: ", e)
+//                Log.e("MainRepositoryImpl", "getWeatherByCityName: ", e)
                 // load data from cache
-                val forecastEntity: ForecastEntity = forecastDao.load(city)
+                val forecastEntity: ForecastEntity? = forecastDao.load(city)
                 // if cache has data, show it with error message
                 if (forecastEntity != null) {
                     val myMainResponse: MainResponse = forecastEntity.toMainResponse()
