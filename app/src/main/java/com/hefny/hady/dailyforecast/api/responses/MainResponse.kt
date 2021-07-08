@@ -15,7 +15,7 @@ data class MainResponse(
     val city: City
 )
 
-fun MainResponse.toForecastEntity(): ForecastEntity {
+fun MainResponse.toForecastEntity(cityName: String? = null): ForecastEntity {
     val forecastItemList = ArrayList<ForecastItem>()
     forecastList.forEach { forecast ->
         forecastItemList.add(
@@ -30,6 +30,6 @@ fun MainResponse.toForecastEntity(): ForecastEntity {
     }
     return ForecastEntity(
         forecastItemList = forecastItemList,
-        cityName = city.name
+        cityName = cityName ?: city.name
     )
 }
