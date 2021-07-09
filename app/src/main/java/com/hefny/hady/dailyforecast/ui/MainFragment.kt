@@ -53,7 +53,7 @@ class MainFragment : Fragment() {
             // handle success (loading data from remote data source and cache)
             dataResource.data?.peekContent()?.let {
                 Log.d(TAG, "onViewCreated: success: ${it}")
-                weatherAdapter.setForecastData(it.forecastList as ArrayList<Forecast>, it.city.name)
+                weatherAdapter.setForecastData(ArrayList(it.forecastList), it.city.name)
                 error_constraint_layout.visibility = View.GONE
                 weather_recyclerview.visibility = View.VISIBLE
             }
