@@ -49,10 +49,30 @@ class MainFragmentTest {
         hiltRule.inject()
     }
 
-    private var mainRepository: MainRepository = FakeMainRepositoryAndroid(mainResource)
+    private var mainRepository = FakeMainRepositoryAndroid(mainResource)
 
     @BindValue
     val viewModel = MainViewModel(mainRepository)
+
+    @Test
+    fun searchByCityAndProgressbarDisplayInUi(){
+        val activityScenario = launch(MainActivity::class.java)
+        mainRepository.shouldReturnLoading(true)
+        onView(withId(R.id.city_name_edittext)).perform(replaceText(mainResponse.city.name))
+        onView(withId(R.id.search_btn)).perform(click())
+        onView(withId(R.id.progressDialog)).check(matches(isDisplayed()))
+        activityScenario.close()
+    }
+
+    @Test
+    fun searchByCityAndRetryButtonDisplayInUi(){
+        val activityScenario = launch(MainActivity::class.java)
+        mainRepository.shouldReturnError(true)
+        onView(withId(R.id.city_name_edittext)).perform(replaceText(mainResponse.city.name))
+        onView(withId(R.id.search_btn)).perform(click())
+        onView(withId(R.id.retry_btn)).check(matches(isDisplayed()))
+        activityScenario.close()
+    }
 
     @Test
     fun searchByCityAndRecyclerViewHasData() {
@@ -60,6 +80,17 @@ class MainFragmentTest {
         onView(withId(R.id.city_name_edittext)).perform(replaceText(mainResponse.city.name))
         onView(withId(R.id.search_btn)).perform(click())
         onView(withId(R.id.weather_recyclerview)).check(matches(hasDescendant(withText(mainResponse.forecastList[0].weatherDescription[0].description))))
+        activityScenario.close()
+    }
+
+    @Test
+    fun searchByCityAndRecyclerViewHasDataAndError() {
+        val activityScenario = launch(MainActivity::class.java)
+        mainRepository.shouldReturnErrorAndOldData(true)
+        onView(withId(R.id.city_name_edittext)).perform(replaceText(mainResponse.city.name))
+        onView(withId(R.id.search_btn)).perform(click())
+        onView(withId(R.id.weather_recyclerview)).check(matches(hasDescendant(withText(mainResponse.forecastList[0].weatherDescription[0].description))))
+        onView(withId(R.id.not_accurate_data_textview)).check(matches(isDisplayed()))
         activityScenario.close()
     }
 }

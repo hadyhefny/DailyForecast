@@ -7,6 +7,7 @@ import com.hefny.hady.dailyforecast.utils.Resource
 class FakeMainRepositoryAndroid(private val mainResource: Resource<MainResponse>) : MainRepository {
     private var shouldReturnError: Boolean = false
     private var shouldReturnErrorAndOldData: Boolean = false
+    private var shouldReturnLoading: Boolean = false
     override suspend fun getWeatherByCityName(city: String): Resource<MainResponse> {
         return when {
             shouldReturnError -> {
@@ -14,6 +15,9 @@ class FakeMainRepositoryAndroid(private val mainResource: Resource<MainResponse>
             }
             shouldReturnErrorAndOldData -> {
                 Resource.data(mainResource.data?.peekContent(), "not accurate data")
+            }
+            shouldReturnLoading->{
+                Resource.loading(true)
             }
             else -> {
                 mainResource
@@ -27,5 +31,8 @@ class FakeMainRepositoryAndroid(private val mainResource: Resource<MainResponse>
 
     fun shouldReturnErrorAndOldData(isError: Boolean) {
         shouldReturnErrorAndOldData = isError
+    }
+    fun shouldReturnLoading(isLoading: Boolean) {
+        shouldReturnLoading = isLoading
     }
 }
