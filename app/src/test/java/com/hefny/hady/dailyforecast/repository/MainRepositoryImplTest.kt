@@ -61,7 +61,7 @@ class MainRepositoryImplTest {
         val myMainResponseResource: Resource<MainResponse> =
             mainRepository.getWeatherByCityName(mainResponse.city.name)
         // THEN - main response is loaded
-        assertThat(myMainResponseResource.data!!.peekContent(), IsEqual(mainResponse))
+        assertThat(myMainResponseResource.data, IsEqual(mainResponse))
     }
 
     @Test
@@ -73,7 +73,7 @@ class MainRepositoryImplTest {
             mainRepository.getWeatherByCityName(mainResponse.city.name)
         // THEN - data is null and error message exists
         assertThat(myMainResponseResource.data, `is`(nullValue()))
-        assertThat(myMainResponseResource.error?.peekContent(), `is`(notNullValue()))
+        assertThat(myMainResponseResource.error, `is`(notNullValue()))
     }
 
     @Test
@@ -87,14 +87,14 @@ class MainRepositoryImplTest {
             mainRepository.getWeatherByCityName(mainResponse.city.name)
         // THEN - data is not null and error message exists
         assertThat(myMainResponseResource.data, `is`(notNullValue()))
-        myMainResponseResource.data?.peekContent()?.forecastList?.forEachIndexed { index, forecast ->
+        myMainResponseResource.data?.forecastList?.forEachIndexed { index, forecast ->
             assertThat(forecast.dateInSeconds, `is`(mainResponse.forecastList[index].dateInSeconds))
             assertThat(forecast.weatherDescription[0].description, `is`(mainResponse.forecastList[index].weatherDescription[0].description))
             assertThat(forecast.weatherData.temp, `is`(mainResponse.forecastList[index].weatherData.temp))
             assertThat(forecast.weatherData.tempMax, `is`(mainResponse.forecastList[index].weatherData.tempMax))
             assertThat(forecast.weatherData.tempMin, `is`(mainResponse.forecastList[index].weatherData.tempMin))
         }
-        assertThat(myMainResponseResource.data?.peekContent()?.city?.name, `is`(mainResponse.city.name))
+        assertThat(myMainResponseResource.data?.city?.name, `is`(mainResponse.city.name))
         assertThat(myMainResponseResource.message, `is`(notNullValue()))
         assertThat(myMainResponseResource.error, `is`(nullValue()))
     }

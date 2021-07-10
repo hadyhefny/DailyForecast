@@ -50,8 +50,11 @@ class MainFragment : Fragment() {
         viewModel.currentWeatherData.observe(viewLifecycleOwner, { dataResource ->
             // handle loading
             uiCommunicationListener.showProgressBar(dataResource.loading)
+            if (dataResource.loading){
+                error_constraint_layout.visibility = View.GONE
+            }
             // handle success (loading data from remote data source and cache)
-            dataResource.data?.peekContent()?.let {
+            dataResource.data?.let {
                 Log.d(TAG, "onViewCreated: success: ${it}")
                 weatherAdapter.setForecastData(ArrayList(it.forecastList), it.city.name)
                 error_constraint_layout.visibility = View.GONE
@@ -60,7 +63,7 @@ class MainFragment : Fragment() {
             // handle loading data from cache only
             not_accurate_data_textview.isVisible = !dataResource.message.isNullOrBlank()
             // handle error
-            dataResource.error?.peekContent()?.let {
+            dataResource.error?.let {
                 error_constraint_layout.visibility = View.VISIBLE
                 error_textview.text = it
                 weather_recyclerview.visibility = View.GONE

@@ -13,7 +13,7 @@ class FakeMainRepository(private val mainResource: Resource<MainResponse>) : Mai
                 Resource.error("something went wrong")
             }
             shouldReturnErrorAndOldData -> {
-                Resource.data(mainResource.data?.peekContent(), "not accurate data")
+                Resource.data(mainResource.data, "not accurate data")
             }
             else -> {
                 mainResource

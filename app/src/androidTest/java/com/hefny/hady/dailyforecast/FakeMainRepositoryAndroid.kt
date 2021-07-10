@@ -14,7 +14,7 @@ class FakeMainRepositoryAndroid(private val mainResource: Resource<MainResponse>
                 Resource.error("something went wrong")
             }
             shouldReturnErrorAndOldData -> {
-                Resource.data(mainResource.data?.peekContent(), "not accurate data")
+                Resource.data(mainResource.data, "not accurate data")
             }
             shouldReturnLoading->{
                 Resource.loading(true)

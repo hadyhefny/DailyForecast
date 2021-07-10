@@ -13,8 +13,6 @@ import com.hefny.hady.dailyforecast.models.City
 import com.hefny.hady.dailyforecast.models.Forecast
 import com.hefny.hady.dailyforecast.models.WeatherData
 import com.hefny.hady.dailyforecast.models.WeatherDescription
-import com.hefny.hady.dailyforecast.repository.MainRepository
-import com.hefny.hady.dailyforecast.utils.Event
 import com.hefny.hady.dailyforecast.utils.Resource
 import dagger.hilt.android.testing.BindValue
 import dagger.hilt.android.testing.HiltAndroidRule
@@ -38,7 +36,7 @@ class MainFragmentTest {
     )
     private val forecastList = listOf(forecast)
     private val mainResponse = MainResponse(forecastList = forecastList, city = City("cairo"))
-    private val mainResource = Resource(false, null, Event(mainResponse))
+    private val mainResource = Resource(false, null, mainResponse)
 
     @get:Rule
     var hiltRule = HiltAndroidRule(this)

@@ -9,7 +9,6 @@ import com.hefny.hady.dailyforecast.models.City
 import com.hefny.hady.dailyforecast.models.Forecast
 import com.hefny.hady.dailyforecast.models.WeatherData
 import com.hefny.hady.dailyforecast.models.WeatherDescription
-import com.hefny.hady.dailyforecast.utils.Event
 import com.hefny.hady.dailyforecast.utils.Resource
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runBlockingTest
@@ -37,7 +36,7 @@ class MainViewModelTest {
     )
     private val forecastList = listOf(forecast)
     private val mainResponse = MainResponse(forecastList = forecastList, city = City("cairo"))
-    private val mainResource = Resource(false, null, Event(mainResponse))
+    private val mainResource = Resource(false, null, mainResponse)
 
     @get:Rule
     var instantExecutorRule = InstantTaskExecutorRule()
@@ -53,7 +52,7 @@ class MainViewModelTest {
     }
 
     @Test
-    fun testSetCityNameTriggerWeatherData(){
+    fun testSetCityNameTriggerWeatherData() {
         // WHEN - set city name
         viewModel.setCityName(mainResponse.city.name)
         // THEN - weather data live data is triggered
@@ -70,7 +69,7 @@ class MainViewModelTest {
         assertThat(value.getOrAwaitValue().loading, `is`(true))
         assertThat(value.getOrAwaitValue().loading, `is`(false))
         assertThat(value.getOrAwaitValue().data, `is`(notNullValue()))
-        assertThat(value.getOrAwaitValue().data?.peekContent(), `is`(mainResponse))
+        assertThat(value.getOrAwaitValue().data, `is`(mainResponse))
     }
 
     @Test
@@ -84,7 +83,7 @@ class MainViewModelTest {
         assertThat(value.getOrAwaitValue().loading, `is`(true))
         assertThat(value.getOrAwaitValue().loading, `is`(false))
         assertThat(value.getOrAwaitValue().data, `is`(nullValue()))
-        assertThat(value.getOrAwaitValue().error?.peekContent(), `is`(notNullValue()))
+        assertThat(value.getOrAwaitValue().error, `is`(notNullValue()))
     }
 
     @Test
