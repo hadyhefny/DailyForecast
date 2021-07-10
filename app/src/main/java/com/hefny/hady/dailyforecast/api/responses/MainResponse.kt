@@ -7,8 +7,6 @@ import com.hefny.hady.dailyforecast.persistence.entities.ForecastEntity
 import com.hefny.hady.dailyforecast.models.ForecastItem
 
 data class MainResponse(
-    @SerializedName("cnt")
-    val count: Int? = null,
     @SerializedName("list")
     val forecastList: List<Forecast>,
     @SerializedName("city")

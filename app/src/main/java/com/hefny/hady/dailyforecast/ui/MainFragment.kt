@@ -52,13 +52,13 @@ class MainFragment : Fragment() {
             uiCommunicationListener.showProgressBar(dataResource.loading)
             if (dataResource.loading){
                 error_constraint_layout.visibility = View.GONE
+                enter_city_name_textview.visibility = View.GONE
             }
             // handle success (loading data from remote data source and cache)
             dataResource.data?.let {
-                Log.d(TAG, "onViewCreated: success: ${it}")
-                weatherAdapter.setForecastData(ArrayList(it.forecastList), it.city.name)
-                error_constraint_layout.visibility = View.GONE
                 weather_recyclerview.visibility = View.VISIBLE
+                error_constraint_layout.visibility = View.GONE
+                weatherAdapter.setForecastData(ArrayList(it.forecastList))
             }
             // handle loading data from cache only
             not_accurate_data_textview.isVisible = !dataResource.message.isNullOrBlank()
