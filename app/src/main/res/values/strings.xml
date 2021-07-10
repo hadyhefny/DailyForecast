@@ -1,3 +1,12 @@
 <resources>
     <string name="app_name">DailyForecast</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="not_accurate_data">Not accurate data</string>
+    <string name="search_by_city_name">Search by city name</string>
+    <string name="retry">retry</string>
+    <string name="current_temp">Current temp.</string>
+    <string name="max_temp">Max. temp.</string>
+    <string name="min_temp">Min. Temp.</string>
+    <string name="temp">%s ℃</string>
 </resources>
