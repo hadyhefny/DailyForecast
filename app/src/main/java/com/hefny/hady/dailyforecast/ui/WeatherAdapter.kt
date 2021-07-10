@@ -7,6 +7,9 @@ import androidx.recyclerview.widget.RecyclerView
 import com.hefny.hady.dailyforecast.R
 import com.hefny.hady.dailyforecast.models.Forecast
 import kotlinx.android.synthetic.main.weather_item.view.*
+import java.text.SimpleDateFormat
+import java.util.*
+import kotlin.collections.ArrayList
 
 class WeatherAdapter : RecyclerView.Adapter<WeatherAdapter.WeatherViewHolder>() {
     var forecastList = ArrayList<Forecast>()
@@ -33,7 +36,8 @@ class WeatherAdapter : RecyclerView.Adapter<WeatherAdapter.WeatherViewHolder>() 
 
     class WeatherViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         fun bin(item: Forecast, cityName: String) {
-            itemView.city_name_textview.text = cityName
+            val formattedTime = SimpleDateFormat("dd/M/yyyy hh:mm aa", Locale.ENGLISH).format(Date(item.dateInSeconds * 1000))
+            itemView.date_textview.text = formattedTime
             itemView.description_textview.text = item.weatherDescription[0].description
             itemView.temp_textview.text = item.weatherData.temp.toString()
             itemView.temp_max_textview.text = item.weatherData.tempMax.toString()

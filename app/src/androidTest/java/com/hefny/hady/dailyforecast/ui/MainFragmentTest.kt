@@ -59,7 +59,7 @@ class MainFragmentTest {
         val activityScenario = launch(MainActivity::class.java)
         onView(withId(R.id.city_name_edittext)).perform(replaceText(mainResponse.city.name))
         onView(withId(R.id.search_btn)).perform(click())
-        onView(withId(R.id.weather_recyclerview)).check(matches(hasDescendant(withText(mainResponse.city.name))))
+        onView(withId(R.id.weather_recyclerview)).check(matches(hasDescendant(withText(mainResponse.forecastList[0].weatherDescription[0].description))))
         activityScenario.close()
     }
 }
